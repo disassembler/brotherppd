@@ -25,6 +25,7 @@ stdenv.mkDerivation rec {
     sed -i '/GHOST_SCRIPT=/c\GHOST_SCRIPT=gs' usr/local/Brother/lpd/psconvertij2
 
     patchelf --set-interpreter ${stdenv.glibc.out}/lib/ld-linux.so.2 usr/local/Brother/lpd/rastertobrij2
+    patchelf --set-interpreter ${stdenv.glibc}/lib/ld-linux.so.2 usr/bin/brprintconfij2
 
     ln -sr usr/lib/libbrcompij2.so.1.0.2 -T usr/lib/libbrcompij2.so.1
     patchelf --set-rpath $out/usr/lib usr/local/Brother/lpd/rastertobrij2
@@ -34,11 +35,13 @@ stdenv.mkDerivation rec {
     patchShebangs ./brlpdwrapperMFC5440CN
     substituteInPlace brlpdwrapperMFC5440CN \
       --replace /usr "$out/usr" \
-      --replace CHANGE "$out/share/cups/model/brmfc5440cn_cups.ppd"
+      --replace CHANGE "$out/share/cups/model/brmfc5440cn_cups.ppd" \
+      --replace brprintconfij2 "$out/usr/bin/brprintconfij2"
     substituteInPlace usr/local/Brother/lpd/filterMFC5440CN \
       --replace /usr/local/Brother/ "$out/usr/local/Brother/"
 
     mkdir -p $out
+    mkdir -p $out/weg
     mkdir -p $out/lib/cups/filter/
     mkdir -p $out/share/cups/model
     cp -r -v usr $out
