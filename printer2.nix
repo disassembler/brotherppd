@@ -44,6 +44,7 @@ stdenv.mkDerivation rec {
     cp -r -v usr $out
     cp brlpdwrapperMFC5440CN $out/lib/cups/filter/brlpdwrapperMFC5440CN
     cp $srcPPD $out/share/cups/model/brmfc5440cn_cups.ppd
+    patchelf --set-rpath $out/usr/lib/libbrcompij2.so.1.0.2 $out/usr/local/Brother/lpd/rastertobrij2
     '';
 
       postInstall = ''
