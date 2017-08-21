@@ -1,4 +1,4 @@
-#!/bin/tcsh
+#! /run/current-system/sw/bin/tcsh
 #
 # Brother Print filter  
 # Copyright (C) 2004 Brother. Industries, Ltd.
@@ -20,10 +20,11 @@
 #
 
 
+set  PPD = CHANGE
 set  LOGFILE=/dev/null
-set  LOGLEVEL=1
-set  DEBUG=0
-set  LOG_LATESTONLY=1
+set  LOGLEVEL=3
+set  DEBUG=1
+set  LOG_LATESTONLY=0
 set  errorcode=0
 
 if($DEBUG != 0) then
@@ -35,7 +36,7 @@ set  PRINTER=MFC5440CN
 
 
 
-set BRPRINTCONFIG=brprintconfij2
+set BRPRINTCONFIG='brprintconfij2'
 
 set printerdefaults = ( \
 		    "$BRPRINTCONFIG -P $PRINTER  -md PLAIN" \
@@ -72,7 +73,7 @@ set brcommands = ( \
     Resolution=1200x600		"-reso 1200x600"   \
     Resolution=1200x2400	"-reso 1200x2400"   \
     Resolution=1200x6000	"-reso 1200x6000"   \
-    Bi-DirPrinting=OFF		"-bidir OFF"   \
+    Bi-DirrPrinting=OFF		"-bidir OFF"   \
     Bi-DirPrinting=ON	        "-bidir ON"   \
     MirrorPrint=ON              "-mirro ON"  \
     MirrorPrint=OFF             "-mirro OFF" \
@@ -459,7 +460,7 @@ if(-e "/usr/bin/$BRPRINTCONFIG") then
 	    @ i ++
 	    set ppdlabel = "$PPDdefault[$i]"
 	    set Default=`grep "$ppdlabel"  "$PPD"`
-	    set Default=`echo "$Default" |sed s/" "//g |sed s/" "//g `
+	    set Default=`echo "$Default" |sed 's/\" \"//g' |sed 's/\"	\"//g' `
 	    @ i ++
 	    set ppdlabelref = "$PPDdefault[$i]"
         endif
@@ -510,7 +511,7 @@ if(-e "/usr/bin/$BRPRINTCONFIG") then
   set  INPUT_TEMP_LINE
   set  INPUT_TEMP_OPTIONS=`mktemp /tmp/br_input.XXXXXX`
 
-  echo  $5 |tr " " n > $INPUT_TEMP_OPTIONS
+  echo  $5 |tr " " '\n' > $INPUT_TEMP_OPTIONS
 
   set i = 1
   while("$brcommands[$i]" != "Z")
@@ -578,7 +579,4 @@ endif
 rm -f  $INPUT_TEMP_PS
 
 exit $errorcode
-
-
-
 
