@@ -35,8 +35,8 @@ stdenv.mkDerivation rec {
     patchShebangs ./brlpdwrapperMFC5440CN
     substituteInPlace brlpdwrapperMFC5440CN \
       --replace /usr "$out/usr" \
-      --replace CHANGE "$out/share/cups/model/brmfc5440cn_cups.ppd" \
-      --replace brprintconfij2 "$out/usr/bin/brprintconfij2"
+      --replace CHANGE "$out/share/cups/model/brmfc5440cn_cups.ppd"
+    #      --replace brprintconfij2 "$out/usr/bin/brprintconfij2"
     substituteInPlace usr/local/Brother/lpd/filterMFC5440CN \
       --replace /usr/local/Brother/ "$out/usr/local/Brother/"
 
@@ -48,6 +48,8 @@ stdenv.mkDerivation rec {
     cp brlpdwrapperMFC5440CN $out/lib/cups/filter/brlpdwrapperMFC5440CN
     cp $srcPPD $out/share/cups/model/brmfc5440cn_cups.ppd
 
+    wrapProgram  $out/lib/cups/filter/brlpdwrapperMFC5440CN \
+     --prefix PATH ":" "$out/usr/bin:${stdenv.lib.makeBinPath [ coreutils ]}"
     wrapProgram $out/usr/local/Brother/lpd/psconvertij2 \
       --prefix PATH ":" ${ stdenv.lib.makeBinPath [ gnused coreutils gawk ] }
     wrapProgram $out/usr/local/Brother/lpd/filterMFC5440CN \
