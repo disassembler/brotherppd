@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, cups, dpkg, ghostscript, patchelf, a2ps, coreutils, gnused, gawk, file, makeWrapper }:
+{ stdenv, fetchurl, cups, dpkg, ghostscript, patchelf, a2ps, coreutils, gnused, gawk, file, makeWrapper, tcsh }:
 
 stdenv.mkDerivation rec {
   name = "mfcj47dd0dw-cupswrapper-${version}";
@@ -26,6 +26,7 @@ stdenv.mkDerivation rec {
         patchelf --set-interpreter ${stdenv.glibc.out}/lib/ld-linux.so.2 usr/local/Brother/lpd/rastertobrij2
     #install -m 755 $srcLPD $out/lib/cups/filter/brlpdwrapperMFC5440CN
     cp $srcLPD ./brlpdwrapperMFC5440CN
+    patchShebangs ./brlpdwrapperMFC5440CN
     substituteInPlace brlpdwrapperMFC5440CN \
     --replace /usr "$out/usr" \
     --replace CHANGE "$out/share/cups/model/brmfc5440cn_cups.ppd"
