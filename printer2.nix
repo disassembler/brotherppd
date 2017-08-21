@@ -20,27 +20,28 @@ stdenv.mkDerivation rec {
   installPhase = ''
     ar x $src
     tar xzvf data.tar.gz
-    mkdir -p $out
-    mkdir -p $out/weg
-    cp -r -v usr $out
-    substituteInPlace $out/usr/local/Brother/lpd/filterMFC5440CN \
-    --replace /opt "$out/opt" \
-    sed -i '/GHOST_SCRIPT=/c\GHOST_SCRIPT=gs'$out/usr/local/Brother/lpd/psconvertij2
-        patchelf --set-interpreter ${stdenv.glibc.out}/lib/ld-linux.so.2 $out/usr/local/Brother/lpd/rastertobrij2
-    mkdir -p $out/lib/cups/filter/
+    substituteInPlace usr/local/Brother/lpd/filterMFC5440CN \
+    --replace /opt "$out/opt"
+    sed -i '/GHOST_SCRIPT=/c\GHOST_SCRIPT=gs' usr/local/Brother/lpd/psconvertij2
+        patchelf --set-interpreter ${stdenv.glibc.out}/lib/ld-linux.so.2 usr/local/Brother/lpd/rastertobrij2
     #install -m 755 $srcLPD $out/lib/cups/filter/brlpdwrapperMFC5440CN
-    cp $srcLPD $out/lib/cups/filter/brlpdwrapperMFC5440CN
-    substituteInPlace $out/lib/cups/filter/brlpdwrapperMFC5440CN \
+    cp $srcLPD ./brlpdwrapperMFC5440CN
+    substituteInPlace brlpdwrapperMFC5440CN \
     --replace /usr "$out/usr" \
     --replace CHANGE "$out/share/cups/model/brmfc5440cn_cups.ppd"
-    substituteInPlace $out/usr/local/Brother/lpd/filterMFC5440CN \
+    substituteInPlace usr/local/Brother/lpd/filterMFC5440CN \
     --replace /usr/local/Brother/ "$out/usr/local/Brother/"
-    wrapProgram $out/usr/local/Brother/lpd/psconvertij2 \
+    wrapProgram usr/local/Brother/lpd/psconvertij2 \
     --prefix PATH ":" ${ stdenv.lib.makeBinPath [ gnused coreutils gawk ] }
-    wrapProgram $out/usr/local/Brother/lpd/filterMFC5440CN \
+    wrapProgram usr/local/Brother/lpd/filterMFC5440CN \
     --prefix PATH ":" ${ stdenv.lib.makeBinPath [ ghostscript a2ps file gnused coreutils ] }
 
+    mkdir -p $out
+    mkdir -p $out/weg
+    mkdir -p $out/lib/cups/filter/
     mkdir -p $out/share/cups/model
+    cp -r -v usr $out
+    cp $srcLPD $out/lib/cups/filter/brlpdwrapperMFC5440CN
     cp $srcPPD $out/share/cups/model/brmfc5440cn_cups.ppd
     '';
 
