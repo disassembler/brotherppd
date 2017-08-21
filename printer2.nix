@@ -23,7 +23,7 @@ stdenv.mkDerivation rec {
     substituteInPlace usr/local/Brother/lpd/filterMFC5440CN \
       --replace /opt "$out/opt"
     sed -i '/GHOST_SCRIPT=/c\GHOST_SCRIPT=gs' usr/local/Brother/lpd/psconvertij2
-    patchelf --set-interpreter ${stdenv.glibc.out}/lib/ld-linux.so.2 usr/local/Brother/lpd/rastertobrij2
+    patchelf --set-interpreter ${stdenv.glibc}/lib/ld-linux.so.2 usr/local/Brother/lpd/rastertobrij2
     #install -m 755 $srcLPD $out/lib/cups/filter/brlpdwrapperMFC5440CN
     cp $srcLPD ./brlpdwrapperMFC5440CN
     patchShebangs ./brlpdwrapperMFC5440CN
