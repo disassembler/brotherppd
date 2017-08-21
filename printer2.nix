@@ -23,7 +23,12 @@ stdenv.mkDerivation rec {
     substituteInPlace usr/local/Brother/lpd/filterMFC5440CN \
       --replace /opt "$out/opt"
     sed -i '/GHOST_SCRIPT=/c\GHOST_SCRIPT=gs' usr/local/Brother/lpd/psconvertij2
-    patchelf --set-interpreter ${stdenv.glibc}/lib/ld-linux.so.2 usr/local/Brother/lpd/rastertobrij2
+
+    patchelf --set-interpreter ${stdenv.glibc.out}/lib/ld-linux.so.2 usr/local/Brother/lpd/rastertobrij2
+
+    ln -sr usr/lib/libbrcompij2.so.1.0.2 -T usr/lib/libbrcompij2.so.1
+    patchelf --set-rpath $out/usr/lib usr/local/Brother/lpd/rastertobrij2
+
     #install -m 755 $srcLPD $out/lib/cups/filter/brlpdwrapperMFC5440CN
     cp $srcLPD ./brlpdwrapperMFC5440CN
     patchShebangs ./brlpdwrapperMFC5440CN
@@ -32,19 +37,18 @@ stdenv.mkDerivation rec {
       --replace CHANGE "$out/share/cups/model/brmfc5440cn_cups.ppd"
     substituteInPlace usr/local/Brother/lpd/filterMFC5440CN \
       --replace /usr/local/Brother/ "$out/usr/local/Brother/"
-    wrapProgram usr/local/Brother/lpd/psconvertij2 \
-      --prefix PATH ":" ${ stdenv.lib.makeBinPath [ gnused coreutils gawk ] }
-    wrapProgram usr/local/Brother/lpd/filterMFC5440CN \
-      --prefix PATH ":" ${ stdenv.lib.makeBinPath [ ghostscript a2ps file gnused coreutils ] }
 
     mkdir -p $out
-    mkdir -p $out/weg
     mkdir -p $out/lib/cups/filter/
     mkdir -p $out/share/cups/model
     cp -r -v usr $out
     cp brlpdwrapperMFC5440CN $out/lib/cups/filter/brlpdwrapperMFC5440CN
     cp $srcPPD $out/share/cups/model/brmfc5440cn_cups.ppd
-    patchelf --set-rpath $out/usr/lib/libbrcompij2.so.1.0.2 $out/usr/local/Brother/lpd/rastertobrij2
+
+    wrapProgram $out/usr/local/Brother/lpd/psconvertij2 \
+      --prefix PATH ":" ${ stdenv.lib.makeBinPath [ gnused coreutils gawk ] }
+    wrapProgram $out/usr/local/Brother/lpd/filterMFC5440CN \
+      --prefix PATH ":" ${ stdenv.lib.makeBinPath [ ghostscript a2ps file gnused coreutils ] }
     '';
 
       postInstall = ''
